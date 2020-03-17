@@ -1,9 +1,9 @@
-#include <stdint.h>
+
 #include "uart.h"
 #include "gpio.h"
 
 #define BAUD_RATE 0x00275000 //Under BAUDRATE på s. 156
-#define UART_BASE 0x40002000
+#define UART_BASE 0x40002000 //s. 153
 #define TGT_RXD_PIN 25
 #define TGT_TXD_PIN 24
 #define BUTTON_B_PIN 26
@@ -35,9 +35,9 @@ volatile uint32_t RESERVED5[110];
 volatile uint32_t INTEN;
 volatile uint32_t INTENSET;
 volatile uint32_t INTENCLR;
-volatile uint32_t RESERVED6[94];
+volatile uint32_t RESERVED6[93];
 volatile uint32_t ERRORSRC;
-volatile uint32_t RESERVED7[7];
+volatile uint32_t RESERVED7[31];
 volatile uint32_t ENABLE;
 volatile uint32_t RESERVED8[1];
 volatile uint32_t PSELRTS;
@@ -71,19 +71,21 @@ void uart_init(){
 }
 
 void uart_send(char letter){
-	TXD = letter;
-	STARTTX = 1;
+	UART->STARTTX = 1;
+	UART->TXD = letter;
 
-	while(!TXDRDY); //Sjekker om sending er gjort
-	
-	STOPTX = 1;
+	UART->TXDRDY = 0;
+	while(!(UART->TXDRDY)){ //Sjekker om sending er gjort
+
+	}
+	UART->STOPTX = 1;
 }
 
 char uart_read(){
-	STARTRX = 1;
-	if(RXDRDY == 1){ //if(RXDRDY)
-		RXDRDY = 0;
-		return RXD;
+	UART->STARTRX = 1;
+	if(UART->RXDRDY == 1){ //if(RXDRDY)
+		UART->RXDRDY = 0;
+		return UART->RXD;
 	}
 	return '\0';
 }

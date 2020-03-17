@@ -44,4 +44,5 @@ erase:
 	nrfjprog -f $(FAMILY) --eraseall
 
 clean:
-	$(QUIET)rm $(BUILD_DIR)/main.{elf,hex}
+	$(QUIET)rm $(BUILD_DIR)/main.elf
+	$(QUIET)rm $(BUILD_DIR)/main.hex

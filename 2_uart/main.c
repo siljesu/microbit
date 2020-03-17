@@ -20,22 +20,30 @@ typedef struct {
 } NRF_GPIO_REGS;
 
 int main(){
+
+	uart_init();
+
+		// Configure LED Matrix
+	for(int i = 4; i <= 15; i++){
+		GPIO->DIRSET = (1 << i);
+		GPIO->OUTCLR = (1 << i);
+	}
+
 	GPIO->PIN_CNF[__BUTTON_A_PIN__] = 0;
 	GPIO->PIN_CNF[__BUTTON_B_PIN__] = 0;
 
 	int sleep = 0;
 
-	while(1){
+		//Set to ground
+	for (int i = 4; i <= 12; i++){
+		GPIO->OUTCLR = (1 << i);
+	}
 
-		/* Check if button B is pressed;
-		 * turn on LED matrix if it is. */
+	while(1){
 
 		if (((GPIO->IN)&(1 << __BUTTON_B_PIN__))==0x0){
 			uart_send('B');
 		}
-
-		/* Check if button A is pressed;
-		 * turn off LED matrix if it is. */
 
 		if (((GPIO->IN)&(1 << __BUTTON_A_PIN__))==0x0){
 			uart_send('A');
