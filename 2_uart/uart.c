@@ -76,7 +76,7 @@ void uart_send(char letter){
 
 	while(!TXDRDY); //Sjekker om sending er gjort
 	
-	STARTTX = 0;
+	STOPTX = 1;
 }
 
 char uart_read(){
