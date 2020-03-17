@@ -2,7 +2,7 @@
 #include "uart.h"
 #include "gpio.h"
 
-#define BAUD_RATE 9600
+#define BAUD_RATE 0x00275000 //Under BAUDRATE på s. 156
 #define UART_BASE 0x40002000
 #define TGT_RXD_PIN 25
 #define TGT_TXD_PIN 24
@@ -70,9 +70,21 @@ void uart_init(){
 
 }
 
-void uart_send(char letter);
+void uart_send(char letter){
+	TXD = letter;
+	STARTTX = 1;
+
+	while(!TXDRDY); //Sjekker om sending er gjort
+	
+	STARTTX = 0;
+}
 
 char uart_read(){
-
+	STARTRX = 1;
+	if(RXDRDY == 1){ //if(RXDRDY)
+		RXDRDY = 0;
+		return RXD;
+	}
+	return '\0';
 }
 
